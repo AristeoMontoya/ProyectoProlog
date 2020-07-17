@@ -53,6 +53,16 @@ main():-
 	write(N),
 	write(EF).
 
+main():-
+	primerApellido(PAV, PAC),
+	segundoApellido(SA),
+	nombre(N),
+%Incluir a futuro conversor a letra mayusculas y si ya son mayusculas comprobar
+	write(PAC),
+	write(PAV),
+	write(SA),
+	write(N).
+
 primerVocal([], _).
 primerVocal([C | R], V) :- vocal(C), V = C, !. 
 primerVocal([C | R], V) :- not(vocal(C)), primerVocal(R, V).
