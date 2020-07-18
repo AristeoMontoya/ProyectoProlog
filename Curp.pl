@@ -41,10 +41,10 @@ ciudad(ciudad). de(de). mexico(mexico).
 san(san). luis(luis). potosi(potosi). 
 baja(baja). california(california). sur(sur). norte(norte).
 
-main():-
-	primerApellido(PAV, PAC),
-	segundoApellido(SA),
-	nombre(N),
+main():- 
+	primerApellido(PAV, PAC, PACI), 
+	segundoApellido(SA, SAC),
+	nombre(N, NC),
 	entFederativa(EF),
 %Incluir a futuro conversor a letra mayusculas y si ya son mayusculas comprobar
 	write(PAC),
@@ -53,56 +53,52 @@ main():-
 	write(N),
 	write(EF).
 
-main():-
-	primerApellido(PAV, PAC),
-	segundoApellido(SA),
-	nombre(N),
-%Incluir a futuro conversor a letra mayusculas y si ya son mayusculas comprobar
-	write(PAC),
-	write(PAV),
-	write(SA),
-	write(N).
-
+% Realiza corte al encontrar una vocal, de lo contrario 
+% se hace el caso recursvio con el resto de la lista.
 primerVocal([], _).
-primerVocal([C | R], V) :- vocal(C), V = C, !. 
-primerVocal([C | R], V) :- not(vocal(C)), primerVocal(R, V).
+primerVocal([C | _], C) :- vocal(C), !. 
+primerVocal([_ | R], V) :- primerVocal(R, V).
 
-primerApellido(S, L) :-
+% Extracción de consonantes
+% Igual que las vocales pero con condición invertida
+primerConsonante([], _).
+primerConsonante([C | _], C) :- not(vocal(C)), !.
+primerConsonante([_ | R], C) :- primerConsonante(R, C).
+
+charName([Texto|_], L, R):- string_chars(Texto, [L | R]).
+
+primerApellido(S, L, I) :-
 	write("Ingresa tu primer apellido: "),
 	readln(C),
 	charName(C, L, R),
-	primerVocal(R, S).
-%este charName es solo para primer apellido
-charName([Texto|_], L, R):- string_chars(Texto, [L | R]).
+	primerVocal(R, S),
+	primerConsonante(R, I).
 
-segundoApellido(L):-
+segundoApellido(L, CI):-
 	write("Ingresa tu segundo apellido: "),
 	readln(C),
-	charName2doAp(C, L).
-%este charName es solo para segundo apellido
-charName2doAp([Texto|_], L):- string_chars(Texto, [L|_]).
+	charName(C, L, R), % Se extrae la primera letra de la lista y la primer consonante del resto
+	primerConsonante(R, CI).
 
-nombre(Res):-write("Ingresa nombre(s): "),
-	readln(T), enlistar(T, Res).
+nombre(Res, Ci):- write("Ingresa nombre(s): "),
+	readln(T), enlistar(T, Res, Ci),!.
 	
 %por si no es maria ni josé el nombre correspondiente a esta llamada, puede ser la 1ra llamada o puede provenir del proc debajo
-enlistar([T|_], Res):- not(jose(T)), not(maria(T)), charName(T, Res).
+enlistar([T|_], Res, Ci):- not(jose(T)), not(maria(T)), charNameNombre(T, Res, Ci).
 
 %por si el primer nombre es josé o maría descarta el proc de arriba, se manda a llamar el este y saca la letra del 2do nombre
-enlistar([_,Y|_], Res):- charName(Y, Res).
-%solo será para el nombre este proc de charName
-charName(Texto, Res):- string_chars(Texto, [L | _]), Res = L, !.
+enlistar([_,Y|_], Res, Ci):- charNameNombre(Y, Res, Ci).
 
+%solo será para el nombre este proc de charNameNombre
+charNameNombre(Texto, Res, Ci):- string_chars(Texto, [Res | R]), primerConsonante(R, Ci), !.
 
 %Entidad Federativa
-
 entFederativa(R):-
 	write("Ingresa el estado donde naciste: "),
 	readln(T), listaDpalabras(T, [EF|Rest]),
 	(aguascalientes(EF) -> R = "as" ;
 		campeche(EF) -> R = "cc" ;
 		coahuila(EF) -> R = "cl" ;
-		%%%
 		colima(EF) -> R = "cm" ;
 		chiapas(EF) -> R = "cs" ;
 		chihuahua(EF) -> R = "ch" ;
@@ -126,8 +122,7 @@ entFederativa(R):-
 		veracruz(EF) -> R = "vz" ;
 		yucatan(EF) -> R = "yn" ;
 		zacatecas(EF) -> R = "zs" ;
-		distrito(EF) -> R = "df"
-	 ;
+		distrito(EF) -> R = "df";
 		entFederativa2(Rest, R)
 	).
 entFederativa2([], R):-
@@ -153,3 +148,15 @@ entFederativa2([_,_|_], R):-
 		
 listaDpalabras(T, REF):-
 	REF = T.
+
+
+% Primera consonante interna del primer apellido [*]
+
+% Primera consonante interna del segundo apellido [*]
+
+% Primera consonante interna del nombre
+
+% Dígito del 0-9 para fechas de nacimiento hasta el año 1999 y A-Z 
+% para fechas de nacimiento a partir del 2000
+
+% Dígito para evitar duplicados
