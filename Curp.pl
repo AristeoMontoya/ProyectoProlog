@@ -149,9 +149,8 @@ entFederativa2([_,_|_], R):-
 listaDpalabras(T, REF):-
 	REF = T.
 % Determinar sexo
- hombreMujer(R):- write("ingresa tu sexo: "), 
- readln(G), primerPalabra(G, R2), string_chars(R2, [R | ]).  
- primerPalabra([Texto|], R):- R = Texto
+ hombreMujer(R) :- write("ingresa tu sexo: "), readln(G), primerPalabra(G, R2), string_chars(R2, R).  
+ primerPalabra([Texto | _], Texto).
 
 % Primera consonante interna del primer apellido [*]
 
@@ -162,12 +161,10 @@ listaDpalabras(T, REF):-
 % Dígito del 0-9 para fechas de nacimiento hasta el año 1999 y A-Z 
 
 % para fechas de nacimiento a partir del 2000
-validarAño(A):- write("Ingresa tu año de nacimiento: "), read(A),
-                write("Ingresa tu mes de nacimiento: "), read(B),
-		write("Ingresa tu año de nacimiento: "), read(C),
-		write("Tu fecha de nacimiento es: "), FechaR is (A,B,C), write(FechaR).
-
-A > 1900 , A <2020.
+validarAño(A):- write("Ingresa tu año de nacimiento: "), readln(A),
+                write("Ingresa tu mes de nacimiento: "), readln(B),
+				write("Ingresa tu día de nacimiento: "), readln(C),
+				write("Tu fecha de nacimiento es: "), write(A), write(B), write(C), A > 1900 , A < 2020.
 
 numeroMes(enero,'01').
 numeroMes(febrero,'02').
