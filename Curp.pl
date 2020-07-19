@@ -148,7 +148,10 @@ entFederativa2([_,_|_], R):-
 		
 listaDpalabras(T, REF):-
 	REF = T.
-
+% Determinar sexo
+ hombreMujer(R):- write("ingresa tu sexo: "), 
+ readln(G), primerPalabra(G, R2), string_chars(R2, [R | ]).  
+ primerPalabra([Texto|], R):- R = Texto
 
 % Primera consonante interna del primer apellido [*]
 
