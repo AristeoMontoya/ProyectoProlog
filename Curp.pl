@@ -158,7 +158,8 @@ listaDpalabras(T, REF):-
 
 % Dígito del 0-9 para fechas de nacimiento hasta el año 1999 y A-Z 
 % para fechas de nacimiento a partir del 2000
-validarAño(X):- X > 1900 , X <2020.
+validarAño(X):- write("Ingresa tu fecha de nacimiento: "),
+X > 1900 , X <2020.
 
 numeroMes(enero,'01').
 numeroMes(febrero,'02').
