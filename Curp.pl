@@ -158,5 +158,18 @@ listaDpalabras(T, REF):-
 
 % Dígito del 0-9 para fechas de nacimiento hasta el año 1999 y A-Z 
 % para fechas de nacimiento a partir del 2000
+validarAño(X):- X > 1900 , X <2020.
 
+numeroMes(enero,'01').
+numeroMes(febrero,'02').
+numeroMes(marzo,'03').
+numeroMes(abril,'04').
+numeroMes(mayo,'05').
+numeroMes(junio,'06').
+numeroMes(julio,'07').
+numeroMes(agosto,'08').
+numeroMes(septiembre,'09').
+numeroMes(octubre,'10').
+numeroMes(noviembre,'11').
+numeroMes(diciembre,'12').
 % Dígito para evitar duplicados
