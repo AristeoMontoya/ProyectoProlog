@@ -65,7 +65,7 @@ primerConsonante([], _).
 primerConsonante([C | _], C) :- not(vocal(C)), !.
 primerConsonante([_ | R], C) :- primerConsonante(R, C).
 
-charName([Texto|_], L, R):- string_chars(Texto, [L | R]).
+charName([Texto|_], L, R):- write(Texto), string_chars(Texto, [L | R]).
 
 primerApellido(S, L, I) :-
 	write("Ingresa tu primer apellido: "),
@@ -148,34 +148,33 @@ entFederativa2([_,_|_], R):-
 		
 listaDpalabras(T, REF):-
 	REF = T.
+
 % Determinar sexo
  hombreMujer(R) :- write("ingresa tu sexo: "), readln(G), primerPalabra(G, R2), string_chars(R2, R).  
  primerPalabra([Texto | _], Texto).
 
-% Primera consonante interna del primer apellido [*]
+prueba(A) :- write('Entra: '), readln(C), write(C), string_chars(C, A) .
 
-% Primera consonante interna del segundo apellido [*]
+% Fecha de nacimiento 
+validarAño(D, M ,A):- write("Ingresa tu año de nacimiento: "), readln([A]),
+                write("Ingresa tu mes de nacimiento: "), readln([ML]),
+				write("Ingresa tu día de nacimiento: "), readln([D]),
+				write("Tu fecha de nacimiento es: "),
+				numeroMes(ML, M),
+				write(A), write(M), write(D), A > 1900 , A < 2020.
 
-% Primera consonante interna del nombre
+numeroMes(enero, 01).
+numeroMes(febrero, 02).
+numeroMes(marzo, 03).
+numeroMes(abril 04).
+numeroMes(mayo, 05).
+numeroMes(junio, 06).
+numeroMes(julio, 07).
+numeroMes(agosto, 08).
+numeroMes(septiembre, 09).
+numeroMes(octubre, 10).
+numeroMes(noviembre, 11).
+numeroMes(diciembre, 12).
 
-% Dígito del 0-9 para fechas de nacimiento hasta el año 1999 y A-Z 
-
-% para fechas de nacimiento a partir del 2000
-validarAño(A):- write("Ingresa tu año de nacimiento: "), readln(A),
-                write("Ingresa tu mes de nacimiento: "), readln(B),
-				write("Ingresa tu día de nacimiento: "), readln(C),
-				write("Tu fecha de nacimiento es: "), write(A), write(B), write(C), A > 1900 , A < 2020.
-
-numeroMes(enero,'01').
-numeroMes(febrero,'02').
-numeroMes(marzo,'03').
-numeroMes(abril,'04').
-numeroMes(mayo,'05').
-numeroMes(junio,'06').
-numeroMes(julio,'07').
-numeroMes(agosto,'08').
-numeroMes(septiembre,'09').
-numeroMes(octubre,'10').
-numeroMes(noviembre,'11').
-numeroMes(diciembre,'12').
-% Dígito para evitar duplicados
+% 65 al 90 las letras en ASCII
+homoClave(A, HC) :- (A < 2000 -> random(0, 9, H) ; random(65, 90, C), char_code(H, C)), random(0, 9, UD), string_concat(H, UD, HUD), text_to_string(HC, HUD).
