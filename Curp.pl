@@ -6,9 +6,6 @@ vocal(u).
 jose(jose).
 maria(maria).
 
-%meses
-meses([enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre])
-
 %Entidad Federativa
 aguascalientes(aguascalientes). 
 campeche(campeche). 
@@ -44,37 +41,6 @@ ciudad(ciudad). de(de). mexico(mexico).
 san(san). luis(luis). potosi(potosi). 
 baja(baja). california(california). sur(sur). norte(norte).
 
-main():- 
-	primerApellido(PAV, PAC, PACI), 
-	segundoApellido(SA, SAC),
-	nombre(N, NC),
-	entFederativa(EF),
-%Incluir a futuro conversor a letra mayusculas y si ya son mayusculas comprobar
-	write(PAC),
-	write(PAV),
-	write(SA),
-	write(N),
-	write(EF).
-
-% Realiza corte al encontrar una vocal, de lo contrario 
-% se hace el caso recursvio con el resto de la lista.
-primerVocal([], _).
-primerVocal([C | _], C) :- vocal(C), !. 
-primerVocal([_ | R], V) :- primerVocal(R, V).
-
-%valida longitud de fecha de nacimiento 
-valida(X) :- longitud(X,C), !, C==2.
-validaDia(X) :- X<32,X>00.
-validaMes(X) :- X<13,X>00.
-validaMes2(X) :- meses(M), pertenece(X, M), !.
-validarAnio(X) :- X<100, X>00.
-
-%valida formato fecha de nacimiento
-
-anio_two_chars(N, R):- atom_chars(N, X), validacion(X), string_to_atom(X, Y), atom_number(Y,R).
-anio([_,_|B], R) :- string_to_atom(B, X), atom_number(X, R).
-anio_four_chars(N, R) :- atom_chars(N, X), anio(X, R).
-
 %numero representa a meses
 numeroMes(enero, '01' ).
 numeroMes(febrero, '02').
@@ -89,13 +55,38 @@ numeroMes(octubre, '10').
 numeroMes(noviembre, '11').
 numeroMes(diciembre, '12').
 
+main(Curp):- 
+	primerApellido(PAV, PAC, PACI), 
+	segundoApellido(SA, SAC),
+	nombre(N, NC),
+	fechaNacimiento(D, M, A4),
+	entFederativa(EF),
+	hombreMujer(S),
+	homoClave(A4, HC),
+	año_four_chars(A4, A2),
+	concatenar([PAC, PAV, SA, N, A2, M, D, S, EF, PACI, SAC, NC, HC], Curp).
+
+concatenar([A], A) :- !.
+concatenar([A | R], Curp) :- concatenar(R, B), string_concat(A, B, Curp1), string_upper(Curp1, Curp).
+
+% Realiza corte al encontrar una vocal, de lo contrario 
+% se hace el caso recursvio con el resto de la lista.
+primerVocal([], _).
+primerVocal([C | _], C) :- vocal(C), !. 
+primerVocal([_ | R], V) :- primerVocal(R, V).
+
+
+%valida formato fecha de nacimiento
+año([_,_|B], R) :- string_to_atom(B, X), atom_number(X, R).
+año_four_chars(N, R) :- atom_chars(N, X), año(X, R).
+
 % Extracción de consonantes
 % Igual que las vocales pero con condición invertida
 primerConsonante([], _).
 primerConsonante([C | _], C) :- not(vocal(C)), !.
 primerConsonante([_ | R], C) :- primerConsonante(R, C).
 
-charName([Texto|_], L, R):- write(Texto), string_chars(Texto, [L | R]).
+charName([Texto|_], L, R):- string_chars(Texto, [L | R]).
 
 primerApellido(S, L, I) :-
 	write("Ingresa tu primer apellido: "),
@@ -135,8 +126,7 @@ entFederativa(R):-
 		durango(EF) -> R = "dg" ;
 		guanajuato(EF) -> R = "gt" ;
 		guerrero(EF) -> R = "gr" ;
-		hidalgo(EF) -> R = "hr" ;
-		jalisco(EF) -> R = "jc" ;
+		hidalgo(EF) -> R = "hr" ; jalisco(EF) -> R = "jc" ;
 		mexico(EF) -> R = "mc" ;
 		michoacan(EF) -> R = "mn" ;
 		morelos(EF) -> R = "ms" ;
@@ -180,18 +170,12 @@ listaDpalabras(T, REF):-
 	REF = T.
 
 % Determinar sexo
- hombreMujer(R) :- write("ingresa tu sexo: "), readln(G), primerPalabra(G, R2), string_chars(R2, R).  
- primerPalabra([Texto | _], Texto).
-
-prueba(A) :- write('Entra: '), readln(C), write(C), string_chars(C, A) .
+hombreMujer(R) :- write("ingresa tu sexo: "), readln([G]), string_chars(G, [R | _]).  
 
 %convertir a formato CURP la fecha de nacimiento
-write('Escribe tu año de naciemiento:  ', n1, ((read(YEAR), anio_two_chars(YEAR, NYR)); (read(YEAR), anio_four_chars(YEAR, NYR))),
-validarAnio(NYR),
-write('Escribe tu mes de nacimiento: '), nl, read(MES), numeroMes(MES, MS), validaMes2(MES),
-write('Escribe tu dia de nacimiento: '), nl, read(DIA), dia(DIA, NDIA), validaDia(NDIA).
-				
-
+fechaNacimiento(D, M, A) :- write('Ingresa el año de nacimiento: '), readln([A]), 
+							write('Ingresa el mes de nacimento: '), readln([M1]), numeroMes(M1, M),
+							write('Ingresa el día de nacimiento: '), readln([D]).
 
 % 65 al 90 las letras en ASCII
-homoClave(A, HC) :- (A < 2000 -> random(0, 9, H) ; random(65, 90, C), char_code(H, C)), random(0, 9, UD), string_concat(H, UD, HUD), text_to_string(HC, HUD).
+homoClave(A, HC) :- (A < 2000 -> random(0, 9, I) ; random(65, 90, C), char_code(I, C)), random(0, 9, UD), string_concat(I, UD, HC).
