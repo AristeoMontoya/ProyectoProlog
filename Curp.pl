@@ -4,8 +4,8 @@ vocal(i).
 vocal(o).
 vocal(u).
 
-jose(jose).
-maria(maria).
+compuesto(jose).
+compuesto(maria).
 
 %Entidad Federativa
 aguascalientes(aguascalientes). 
@@ -105,10 +105,10 @@ nombre(Res, Ci):- write("Ingresa nombre(s): "),
 				  readln(T), enlistar(T, Res, Ci),!.
 	
 %por si no es maria ni josé el nombre correspondiente a esta llamada, puede ser la 1ra llamada o puede provenir del proc debajo
-enlistar([T|_], Res, Ci):- not(jose(T)), not(maria(T)), charNameNombre(T, Res, Ci).
+enlistar([T | _], Res, Ci):- not(compuesto(T)), charNameNombre(T, Res, Ci).
 
 %por si el primer nombre es josé o maría descarta el proc de arriba, se manda a llamar el este y saca la letra del 2do nombre
-enlistar([_,Y|_], Res, Ci):- charNameNombre(Y, Res, Ci).
+enlistar([_, Y | _], Res, Ci):- charNameNombre(Y, Res, Ci).
 
 %solo será para el nombre este proc de charNameNombre
 charNameNombre(Texto, Res, Ci):- string_chars(Texto, [Res | R]), primer_consonante(R, Ci), !.
