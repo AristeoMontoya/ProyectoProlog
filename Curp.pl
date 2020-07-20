@@ -3,6 +3,7 @@ vocal(e).
 vocal(i).
 vocal(o).
 vocal(u).
+
 jose(jose).
 maria(maria).
 
@@ -42,67 +43,66 @@ san(san). luis(luis). potosi(potosi).
 baja(baja). california(california). sur(sur). norte(norte).
 
 %numero representa a meses
-numeroMes(enero, '01' ).
-numeroMes(febrero, '02').
-numeroMes(marzo, '03').
-numeroMes(abril, '04').
-numeroMes(mayo, '05').
-numeroMes(junio, '06').
-numeroMes(julio, '07').
-numeroMes(agosto, '08').
-numeroMes(septiembre, '09').
-numeroMes(octubre, '10').
-numeroMes(noviembre, '11').
-numeroMes(diciembre, '12').
+numero_mes(enero, '01').
+numero_mes(febrero, '02').
+numero_mes(marzo, '03').
+numero_mes(abril, '04').
+numero_mes(mayo, '05').
+numero_mes(junio, '06').
+numero_mes(julio, '07').
+numero_mes(agosto, '08').
+numero_mes(septiembre, '09').
+numero_mes(octubre, '10').
+numero_mes(noviembre, '11').
+numero_mes(diciembre, '12').
 
-main(Curp):- 
-	primerApellido(PAV, PAC, PACI), 
-	segundoApellido(SA, SAC),
+generar(Curp):- 
+	primer_apellido(PAV, PAC, PACI), 
+	segundo_apellido(SA, SAC),
 	nombre(N, NC),
-	fechaNacimiento(D, M, A4),
-	entFederativa(EF),
-	hombreMujer(S),
-	homoClave(A4, HC),
-	año_four_chars(A4, A2),
+	fecha_nacimiento(D, M, A4),
+	entidad_federativa(EF),
+	genero(S),
+	homoclave(A4, HC),
+	año_cuatro_digitos(A4, A2),
 	concatenar([PAC, PAV, SA, N, A2, M, D, S, EF, PACI, SAC, NC, HC], Curp).
 
+% Concatena de forma recursiva los elementos de una lista en un String
 concatenar([A], A) :- !.
 concatenar([A | R], Curp) :- concatenar(R, B), string_concat(A, B, Curp1), string_upper(Curp1, Curp).
 
 % Realiza corte al encontrar una vocal, de lo contrario 
 % se hace el caso recursvio con el resto de la lista.
-primerVocal([], _).
-primerVocal([C | _], C) :- vocal(C), !. 
-primerVocal([_ | R], V) :- primerVocal(R, V).
-
+primer_vocal([], _).
+primer_vocal([C | _], C) :- vocal(C), !. 
+primer_vocal([_ | R], V) :- primer_vocal(R, V).
 
 %valida formato fecha de nacimiento
 año([_,_|B], R) :- string_to_atom(B, X), atom_number(X, R).
-año_four_chars(N, R) :- atom_chars(N, X), año(X, R).
+año_cuatro_digitos(N, R) :- atom_chars(N, X), año(X, R).
 
 % Extracción de consonantes
 % Igual que las vocales pero con condición invertida
-primerConsonante([], _).
-primerConsonante([C | _], C) :- not(vocal(C)), !.
-primerConsonante([_ | R], C) :- primerConsonante(R, C).
+primer_consonante([], _).
+primer_consonante([C | _], C) :- not(vocal(C)), !.
+primer_consonante([_ | R], C) :- primer_consonante(R, C).
 
 charName([Texto|_], L, R):- string_chars(Texto, [L | R]).
 
-primerApellido(S, L, I) :-
+primer_apellido(S, L, I) :-
 	write("Ingresa tu primer apellido: "),
 	readln(C),
 	charName(C, L, R),
-	primerVocal(R, S),
-	primerConsonante(R, I).
+	primer_vocal(R, S),
+	primer_consonante(R, I).
 
-segundoApellido(L, CI):-
-	write("Ingresa tu segundo apellido: "),
-	readln(C),
-	charName(C, L, R), % Se extrae la primera letra de la lista y la primer consonante del resto
-	primerConsonante(R, CI).
+segundo_apellido(L, CI):- write("Ingresa tu segundo apellido: "),
+						  readln(C),
+						  charName(C, L, R), % Se extrae la primera letra de la lista y la primer consonante del resto
+						  primer_consonante(R, CI).
 
 nombre(Res, Ci):- write("Ingresa nombre(s): "),
-	readln(T), enlistar(T, Res, Ci),!.
+				  readln(T), enlistar(T, Res, Ci),!.
 	
 %por si no es maria ni josé el nombre correspondiente a esta llamada, puede ser la 1ra llamada o puede provenir del proc debajo
 enlistar([T|_], Res, Ci):- not(jose(T)), not(maria(T)), charNameNombre(T, Res, Ci).
@@ -111,12 +111,12 @@ enlistar([T|_], Res, Ci):- not(jose(T)), not(maria(T)), charNameNombre(T, Res, C
 enlistar([_,Y|_], Res, Ci):- charNameNombre(Y, Res, Ci).
 
 %solo será para el nombre este proc de charNameNombre
-charNameNombre(Texto, Res, Ci):- string_chars(Texto, [Res | R]), primerConsonante(R, Ci), !.
+charNameNombre(Texto, Res, Ci):- string_chars(Texto, [Res | R]), primer_consonante(R, Ci), !.
 
 %Entidad Federativa
-entFederativa(R):-
+entidad_federativa(R):-
 	write("Ingresa el estado donde naciste: "),
-	readln(T), listaDpalabras(T, [EF|Rest]),
+	readln(T), lista_palabras(T, [EF | Rest]),
 	(aguascalientes(EF) -> R = "as" ;
 		campeche(EF) -> R = "cc" ;
 		coahuila(EF) -> R = "cl" ;
@@ -126,7 +126,8 @@ entFederativa(R):-
 		durango(EF) -> R = "dg" ;
 		guanajuato(EF) -> R = "gt" ;
 		guerrero(EF) -> R = "gr" ;
-		hidalgo(EF) -> R = "hr" ; jalisco(EF) -> R = "jc" ;
+		hidalgo(EF) -> R = "hr" ; 
+		jalisco(EF) -> R = "jc" ;
 		mexico(EF) -> R = "mc" ;
 		michoacan(EF) -> R = "mn" ;
 		morelos(EF) -> R = "ms" ;
@@ -143,17 +144,15 @@ entFederativa(R):-
 		yucatan(EF) -> R = "yn" ;
 		zacatecas(EF) -> R = "zs" ;
 		distrito(EF) -> R = "df";
-		entFederativa2(Rest, R)
+		entidad_federativa2(Rest, R)
 	).
-entFederativa2([], R):-
-	R = "ne".
-	
-entFederativa2([EF|[]], R):-
+entidad_federativa2([], R):- R = "ne".
+entidad_federativa2([EF | []], R):-
 	(	roo(EF) -> R = "qr" ;
 		leon(EF) -> R = "nl" ;
 		R = "ne"
 	).
-entFederativa2([_,Y], R):-
+entidad_federativa2([_, Y], R):-
 	(
 		sur(Y) -> R = "bs" ;
 		norte(Y) -> R = "bc" ;
@@ -162,20 +161,18 @@ entFederativa2([_,Y], R):-
 		;
 		R = "ne"
 	).
-entFederativa2([_,_|_], R):-
-		R = "ne".
+entidad_federativa2([_, _ | _], R):- R = "ne".
 
-		
-listaDpalabras(T, REF):-
-	REF = T.
+lista_palabras(T, T).
 
 % Determinar sexo
-hombreMujer(R) :- write("ingresa tu sexo: "), readln([G]), string_chars(G, [R | _]).  
+genero(R) :- write("Ingresa tu sexo: "), readln([G]), string_chars(G, [R | _]).  
 
 %convertir a formato CURP la fecha de nacimiento
-fechaNacimiento(D, M, A) :- write('Ingresa el año de nacimiento: '), readln([A]), 
-							write('Ingresa el mes de nacimento: '), readln([M1]), numeroMes(M1, M),
-							write('Ingresa el día de nacimiento: '), readln([D]).
+fecha_nacimiento(D, M, A) :- write('Ingresa el año de nacimiento: '), readln([A]), 
+							 write('Ingresa el mes de nacimento: '), readln([M1]), numero_mes(M1, M),
+							 write('Ingresa el día de nacimiento: '), readln([D]).
 
-% 65 al 90 las letras en ASCII
-homoClave(A, HC) :- (A < 2000 -> random(0, 9, I) ; random(65, 90, C), char_code(I, C)), random(0, 9, UD), string_concat(I, UD, HC).
+% Genera dos dígitos para años menores a 2000, de lo contrario genera un número entre el 65 y el 90,
+% que son los números que representan de A a Z en ASCII, luego convierte ese número en el caracter correspondiente
+homoclave(A, HC) :- (A < 2000 -> random(0, 9, I) ; random(65, 90, C), char_code(I, C)), random(0, 9, UD), string_concat(I, UD, HC).
