@@ -6,6 +6,9 @@ vocal(u).
 jose(jose).
 maria(maria).
 
+%meses
+meses([enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre])
+
 %Entidad Federativa
 aguascalientes(aguascalientes). 
 campeche(campeche). 
@@ -58,6 +61,33 @@ main():-
 primerVocal([], _).
 primerVocal([C | _], C) :- vocal(C), !. 
 primerVocal([_ | R], V) :- primerVocal(R, V).
+
+%valida longitud de fecha de nacimiento 
+valida(X) :- longitud(X,C), !, C==2.
+validaDia(X) :- X<32,X>00.
+validaMes(X) :- X<13,X>00.
+validaMes2(X) :- meses(M), pertenece(X, M), !.
+validarAnio(X) :- X<100, X>00.
+
+%valida formato fecha de nacimiento
+
+anio_two_chars(N, R):- atom_chars(N, X), validacion(X), string_to_atom(X, Y), atom_number(Y,R).
+anio([_,_|B], R) :- string_to_atom(B, X), atom_number(X, R).
+anio_four_chars(N, R) :- atom_chars(N, X), anio(X, R).
+
+%numero representa a meses
+numeroMes(enero, '01' ).
+numeroMes(febrero, '02').
+numeroMes(marzo, '03').
+numeroMes(abril, '04').
+numeroMes(mayo, '05').
+numeroMes(junio, '06').
+numeroMes(julio, '07').
+numeroMes(agosto, '08').
+numeroMes(septiembre, '09').
+numeroMes(octubre, '10').
+numeroMes(noviembre, '11').
+numeroMes(diciembre, '12').
 
 % Extracción de consonantes
 % Igual que las vocales pero con condición invertida
@@ -155,26 +185,13 @@ listaDpalabras(T, REF):-
 
 prueba(A) :- write('Entra: '), readln(C), write(C), string_chars(C, A) .
 
-% Fecha de nacimiento 
-validarAño(D, M ,A):- write("Ingresa tu año de nacimiento: "), readln([A]),
-                write("Ingresa tu mes de nacimiento: "), readln([ML]),
-				write("Ingresa tu día de nacimiento: "), readln([D]),
-				write("Tu fecha de nacimiento es: "),
-				numeroMes(ML, M),
-				write(A), write(M), write(D), A > 1900 , A < 2020.
+%convertir a formato CURP la fecha de nacimiento
+write('Escribe tu año de naciemiento:  ', n1, ((read(YEAR), anio_two_chars(YEAR, NYR)); (read(YEAR), anio_four_chars(YEAR, NYR))),
+validarAnio(NYR),
+write('Escribe tu mes de nacimiento: '), nl, read(MES), numeroMes(MES, MS), validaMes2(MES),
+write('Escribe tu dia de nacimiento: '), nl, read(DIA), dia(DIA, NDIA), validaDia(NDIA).
+				
 
-numeroMes(enero, 01).
-numeroMes(febrero, 02).
-numeroMes(marzo, 03).
-numeroMes(abril 04).
-numeroMes(mayo, 05).
-numeroMes(junio, 06).
-numeroMes(julio, 07).
-numeroMes(agosto, 08).
-numeroMes(septiembre, 09).
-numeroMes(octubre, 10).
-numeroMes(noviembre, 11).
-numeroMes(diciembre, 12).
 
 % 65 al 90 las letras en ASCII
 homoClave(A, HC) :- (A < 2000 -> random(0, 9, H) ; random(65, 90, C), char_code(H, C)), random(0, 9, UD), string_concat(H, UD, HUD), text_to_string(HC, HUD).
