@@ -173,7 +173,7 @@ genero(R) :- write("Ingresa tu sexo: "), readln([G]), string_chars(G, [R | _]).
 fecha_nacimiento(D, M, A) :- write('Ingresa el anio de nacimiento: '), readln([A]),
 							 write('Ingresa el mes de nacimento: '), readln([M1]), numero_mes(M1, M),
 							 write('Ingresa el dia de nacimiento: '), readln([D1]), 
-							 D1 < 10 -> string_concat(0, D1, D).
+							 (D1 < 10 -> string_concat(0, D1, D) ; D = D1).
 
 % Genera dos dígitos para años menores a 2000, de lo contrario genera un número entre el 65 y el 90,
 % que son los números que representan de A a Z en ASCII, luego convierte ese número en el caracter correspondiente
