@@ -106,7 +106,7 @@ nombre(Res, Ci):- write("Ingresa nombre(s): "),
 
 %por si no es maria ni josé el nombre correspondiente a esta llamada, puede ser la 1ra llamada o puede provenir del proc debajo
 enlistar([T | _], Res, Ci):- not(compuesto(T)), charNameNombre(T, Res, Ci).
-enlistar([T | _], Res, Ci):- charNameNombre(T, Res, Ci).
+enlistar([T | []], Res, Ci):- charNameNombre(T, Res, Ci).
 
 %por si el primer nombre es josé o maría descarta el proc de arriba, se manda a llamar el este y saca la letra del 2do nombre
 enlistar([_, Y | _], Res, Ci):- charNameNombre(Y, Res, Ci).
