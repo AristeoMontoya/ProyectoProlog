@@ -78,7 +78,7 @@ primer_vocal([C | _], C) :- vocal(C), !.
 primer_vocal([_ | R], V) :- primer_vocal(R, V).
 
 %valida formato fecha de nacimiento
-anio([_,_|B], R) :- string_to_atom(B, X), atom_number(X, R).
+anio([_,_|B], R) :- string_to_atom(B, R).
 anio_cuatro_digitos(N, R) :- atom_chars(N, X), anio(X, R).
 
 % Extracción de consonantes
@@ -172,7 +172,8 @@ genero(R) :- write("Ingresa tu sexo: "), readln([G]), string_chars(G, [R | _]).
 %convertir a formato CURP la fecha de nacimiento
 fecha_nacimiento(D, M, A) :- write('Ingresa el anio de nacimiento: '), readln([A]),
 							 write('Ingresa el mes de nacimento: '), readln([M1]), numero_mes(M1, M),
-							 write('Ingresa el dia de nacimiento: '), readln([D]).
+							 write('Ingresa el dia de nacimiento: '), readln([D1]), 
+							 D1 < 10 -> string_concat(0, D1, D).
 
 % Genera dos dígitos para años menores a 2000, de lo contrario genera un número entre el 65 y el 90,
 % que son los números que representan de A a Z en ASCII, luego convierte ese número en el caracter correspondiente
